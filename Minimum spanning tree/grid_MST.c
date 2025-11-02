@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
+#include<sys/types.h>
+#include<math.h>
 
 #define INF INT_MAX
 #define MAX 1005
@@ -201,16 +203,19 @@ void read_undirected_graph(struct graph *g)
     for(size_t i=0;i<g->n;i++){
         for(size_t j=0;j<m;j++){
             size_t u=i*m+j;
-            for(int d=0;d<4;d++){
-                int cr=i+tr[d];
-                int cc=j+tc[d];
-                if(cr>=0 && cr<g->n && cc>=0 &&cc<m)
-                {size_t v=cr*m + cc;
-                int w=arr[cr][cc]-arr[i][j];
-                int w2=arr[i][j]-arr[cr][cc];
-                add_edge(g, u, v, w);
-		        add_edge(g, v, u, w2);}
-            }
+            if(j+1 < m){
+            size_t v = i*m + (j+1);
+            int w = abs(arr[i][j] - arr[i][j+1]);
+            add_edge(g, u, v, w);
+            add_edge(g, v, u, w);
+        }
+        // Down neighbor
+        if(i+1 < g->n){
+            size_t v = (i+1)*m + j;
+            int w = abs(arr[i][j] - arr[i+1][j]);
+            add_edge(g, u, v, w);
+            add_edge(g, v, u, w);
+        }
         }
     }
 
