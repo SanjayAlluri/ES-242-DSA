@@ -1,0 +1,101 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<limits.h>
+
+int MAXI = 10000;
+
+typedef struct{
+    int first;
+    int second;
+}pair;
+
+pair min_heap[10000];
+int curr_size = 0;
+
+void heapify_down(int idx){
+    int r_idx = 2*idx + 2;
+    int l_idx = 2*idx + 1;
+    int i = idx;
+
+    if(r_idx < curr_size){
+        if(min_heap[r_idx].first < min_heap[i].first){
+            i = r_idx;
+        }
+    }
+
+    if(l_idx < curr_size){
+        if(min_heap[l_idx].first < min_heap[i].first){
+            i = l_idx;
+        }
+    }
+
+    if(i == idx){
+        return;
+    }
+
+    pair temp = min_heap[idx];
+    min_heap[idx] = min_heap[i];
+    min_heap[i] = temp;
+
+    heapify_down(i);
+}
+
+void heapify_up(int idx){
+    if(idx == 0){
+        return;
+    }
+
+    int par = (idx-1)/2;
+
+    if(min_heap[idx].first < min_heap[par].first){
+        pair temp = min_heap[idx];
+        min_heap[idx] = min_heap[par];
+        min_heap[par] = temp;
+
+        heapify_up(par);
+    }
+}
+
+void insert(int n, int v){
+    min_heap[curr_size].first = n;
+    min_heap[curr_size].second = v;
+
+    heapify_up(curr_size);
+    curr_size++;
+}
+
+int empty(){
+    return curr_size == 0;
+}
+
+pair top(){
+    return min_heap[0];
+}
+
+void pop(){
+    if(curr_size == 0){
+        return;
+    }
+
+    min_heap[0] = min_heap[curr_size-1];
+    curr_size--;
+
+    if(curr_size > 0){
+        heapify_down(0);
+    }
+}
+
+int main(){
+        insert(3,4);
+        insert(8,4);
+        insert(7,4);
+        insert(9,4);
+
+    while(!empty()){
+        pair p = top();
+        printf("(%d,%d) ", p.first, p.second);
+        pop();
+    }
+
+    return 0;
+}
